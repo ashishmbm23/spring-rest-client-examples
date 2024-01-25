@@ -1,4 +1,4 @@
-package guru.springframework.springrestclientexamples;
+package guru.springframework;
 
 
 import org.junit.jupiter.api.Test;
