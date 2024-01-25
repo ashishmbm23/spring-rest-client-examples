@@ -1,28 +1,29 @@
 package guru.springframework.services;
 
 import guru.springframework.api.domain.User;
-import guru.springframework.api.domain.Users;
-import guru.springframework.config.WebClientConfig;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Objects;
 
-@AllArgsConstructor
-@NoArgsConstructor
+
+
 @Service
 public class ApiServiceImpl implements ApiService {
 
-    @Autowired
     WebClient webClient;
+    private final String apiUrl;
 
-    @Override
-    public List<User> getUsers(Integer limit) {
+    public ApiServiceImpl(WebClient webClient, @Value("${api.url}") String apiUrl){
+        this.webClient = webClient;
+        this.apiUrl = apiUrl;
+    }
+
+    public List<User> getUsersInTraditionalWay(Integer limit) {
 
         return Objects.requireNonNull(webClient
                 .get()
@@ -32,6 +33,22 @@ public class ApiServiceImpl implements ApiService {
                 .bodyToFlux(User.class)
                 .collectList()
                 .block()) ;
+
+    }
+
+    @Override
+    public List<User> getUsers(Integer limit) {
+
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(apiUrl)
+                .queryParam("_limit", limit);
+
+        return webClient.get()
+                .uri(uriComponentsBuilder.toUriString())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToFlux(User.class)
+                .collectList()
+                .block();
 
     }
 }
