@@ -31,9 +31,10 @@ public class UserController {
 
     @PostMapping("/users")
     public String postFormDataUsingWF(Model model, ServerWebExchange serverWebExchange) {
-        return model.addAttribute( "users", apiService.getUsers(
+         model.addAttribute( "users", apiService.getUsers(
                             serverWebExchange.getFormData()
                         .map( formData -> Integer.parseInt(formData.getFirst("_limit")))
-        )).toString();
+        ));
+         return "userList";
     }
 }
