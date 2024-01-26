@@ -6,6 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +39,7 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public List<User> getUsers(Integer limit) {
+    public Flux<User> getUsers(Mono<Integer> limit) {
 
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromUriString(apiUrl)
                 .queryParam("_limit", limit);
@@ -46,9 +48,7 @@ public class ApiServiceImpl implements ApiService {
                 .uri(uriComponentsBuilder.toUriString())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToFlux(User.class)
-                .collectList()
-                .block();
+                .bodyToFlux(User.class);
 
     }
 }

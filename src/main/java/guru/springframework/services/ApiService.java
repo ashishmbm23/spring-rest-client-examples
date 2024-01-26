@@ -1,10 +1,9 @@
 package guru.springframework.services;
 
 import guru.springframework.api.domain.User;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface ApiService {
-    public List<User> getUsers(Integer limit);
+    public Flux<User> getUsers(Mono<Integer> limit);
 }
